@@ -9,6 +9,20 @@
   <packaging>pom</packaging>
   <name>${project.artifactId}</name>
 
+  <url>https://github.com/nathan818fr/polus</url>
+  <inceptionYear>2020</inceptionYear>
+  <organization>
+    <name>nathan818</name>
+    <url>https://github.com/nathan818fr</url>
+  </organization>
+  <licenses>
+    <license>
+      <name>Modified BSD 3-Clause License</name>
+      <url>https://github.com/nathan818fr/polus/blob/classic/LICENSE</url>
+      <distribution>repo</distribution>
+    </license>
+  </licenses>
+
   <modules>
     <module>api</module>
     <module>protocol</module>
@@ -70,6 +84,10 @@
           <version>3.2.0</version>
         </plugin>
         <plugin>
+          <artifactId>maven-shade-plugin</artifactId>
+          <version>3.2.4</version>
+        </plugin>
+        <plugin>
           <artifactId>maven-install-plugin</artifactId>
           <version>2.5.2</version>
         </plugin>
@@ -86,6 +104,16 @@
             <nohelp>true</nohelp>
             <doclint>none</doclint>
           </configuration>
+        </plugin>
+        <plugin>
+          <groupId>org.codehaus.mojo</groupId>
+          <artifactId>license-maven-plugin</artifactId>
+          <version>2.0.0</version>
+        </plugin>
+        <plugin>
+          <groupId>com.coderplus.maven.plugins</groupId>
+          <artifactId>copy-rename-maven-plugin</artifactId>
+          <version>1.0.1</version>
         </plugin>
       </plugins>
     </pluginManagement>
