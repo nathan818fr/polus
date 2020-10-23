@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+This configuration is made to be used with AsyncLoggerContextSelector:
+- shutdownHook is disabled
+- file logger is not flushed immediately
+- com.nathan818.polus.logging.PolusLogging.init()/shutdown() must be called by the implementation
+-->
+<Configuration status="warn" shutdownHook="disable" packages="com.nathan818.polus.logging.log4j2">
+  <Properties>
+    <Property name="LOG_EXCEPTION_CONVERSION_WORD">%xwEx</Property>
+    <Property name="LOG_DATEFORMAT_PATTERN">yyyy-MM-dd HH:mm:ss.SSS</Property>
+    <Property name="CONSOLE_LOG_PATTERN">%clr{%d{${sys:LOG_DATEFORMAT_PATTERN}}}{faint} %clr{%5p} %clr{%pid}{magenta} %clr{-}{faint} %clr{[%17.17t]}{faint} %clr{%-40.40c{1.}}{cyan} %clr{:}{faint} %m%n${sys:LOG_EXCEPTION_CONVERSION_WORD}</Property>
+    <Property name="FILE_LOG_PATTERN">%d{${LOG_DATEFORMAT_PATTERN}} %p %pid - [%t] %c{1.} : %m%n${sys:LOG_EXCEPTION_CONVERSION_WORD}</Property>
+    <Property name="FILE_LOG_PATH">logs</Property>
+    <Property name="FILE_LOG_MAX">10</Property>
+  </Properties>
+  <Appenders>
+    <Console name="Console" target="SYSTEM_OUT" follow="true">
+      <PatternLayout pattern="${sys:CONSOLE_LOG_PATTERN}"/>
+    </Console>
+    <RollingRandomAccessFile name="File" fileName="${sys:FILE_LOG_PATH}/latest.log" filePattern="${sys:FILE_LOG_PATH}/%d{yyyy-MM-dd}-%i.log.gz" immediateFlush="false">
+      <PatternLayout pattern="${sys:FILE_LOG_PATTERN}"/>
+      <Policies>
+        <OnStartupTriggeringPolicy/>
+        <TimeBasedTriggeringPolicy/>
+      </Policies>
+      <DefaultRolloverStrategy max="${sys:FILE_LOG_MAX}"/>
+    </RollingRandomAccessFile>
+  </Appenders>
+  <Loggers>
+    <Logger name="com.nathan818.polus" level="debug"/>
+    <Root level="info">
+      <AppenderRef ref="Console"/>
+      <AppenderRef ref="File"/>
+    </Root>
+  </Loggers>
+</Configuration>
