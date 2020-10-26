@@ -1,6 +1,7 @@
-package com.nathan818.polus.server;
+package com.nathan818.polus.bootstrap;
 
 import com.nathan818.polus.logging.PolusLogging;
+import com.nathan818.polus.server.PolusServer;
 import io.netty.util.ResourceLeakDetector;
 import java.io.File;
 import java.util.Arrays;

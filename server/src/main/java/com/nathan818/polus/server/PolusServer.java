@@ -193,7 +193,7 @@ public class PolusServer implements Server {
         new Thread(this::stopNow, "Shutdown Thread").start();
     }
 
-    void stopNow() {
+    public void stopNow() {
         shutdownLock.lock();
         try {
             if (!isRunning) {
