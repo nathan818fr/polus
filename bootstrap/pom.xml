@@ -27,6 +27,8 @@
   </dependencies>
 
   <build>
+    <finalName>Polus</finalName>
+
     <plugins>
       <plugin>
         <groupId>net.md-5</groupId>
