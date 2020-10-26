@@ -3,7 +3,6 @@ package com.nathan818.polus.server;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import com.nathan818.hazel.protocol.HazelServerChannel;
 import com.nathan818.polus.api.Server;
-import com.nathan818.polus.logging.PolusLogging;
 import com.nathan818.polus.server.config.Config;
 import com.nathan818.polus.server.config.ListenerConfig;
 import com.nathan818.polus.server.config.YamlConfigProvider;
@@ -49,6 +48,7 @@ public class PolusServer implements Server {
     private static final Logger logger = LoggerFactory.getLogger(PolusServer.class);
 
     private Config config;
+    private Runnable stopCallback;
     private volatile @Getter boolean isRunning;
     private final ReentrantLock shutdownLock = new ReentrantLock();
 
@@ -58,7 +58,8 @@ public class PolusServer implements Server {
     private EventLoopGroup networkEventLoops;
     private final Collection<Channel> listeners = new HashSet<>();
 
-    public boolean start(File configFile) throws Exception {
+    public boolean start(File configFile, Runnable stopCallback) throws Exception {
+        this.stopCallback = stopCallback;
         if ((config = loadConfig(configFile)) == null) {
             return false;
         }
@@ -85,7 +86,6 @@ public class PolusServer implements Server {
             return false;
         }
 
-        Runtime.getRuntime().addShutdownHook(new Thread(() -> stop0(false), "ShutdownHook Thread"));
         return true;
     }
 
@@ -128,7 +128,6 @@ public class PolusServer implements Server {
                 .getValidator();
         Set<ConstraintViolation<Config>> violations = validator.validate(config);
         if (!violations.isEmpty()) {
-            logger.info("violations=" + violations);
             logger.error("The configuration file contains invalid values:\n"
                     + violations.stream()
                     .map(v -> "- " + v.getPropertyPath() + " " + v.getMessage() + " (current value: " + v.getInvalidValue() + ")")
@@ -193,41 +192,37 @@ public class PolusServer implements Server {
 
     @Override
     public void stop() {
-        new Thread(() -> stop0(true), "Shutdown Thread").start();
+        new Thread(this::stopNow, "Shutdown Thread").start();
     }
 
-    private void stop0(boolean callSystemExit) {
+    void stopNow() {
         shutdownLock.lock();
         try {
             if (!isRunning) {
                 return;
             }
             isRunning = false;
-
-            logger.info("Stopping...");
-
-            stopListeners();
-
-            // TODO: stop games
-
-            logger.info("Closing event loops");
-            networkEventLoops.shutdownGracefully();
-            gameEventLoops.shutdownGracefully();
-            try {
-                networkEventLoops.awaitTermination(Long.MAX_VALUE, TimeUnit.NANOSECONDS);
-                gameEventLoops.awaitTermination(Long.MAX_VALUE, TimeUnit.NANOSECONDS);
-            } catch (InterruptedException ignored) {
-            }
-
-            logger.info("Stopped!");
         } finally {
             shutdownLock.unlock();
         }
 
-        PolusLogging.shutdown();
+        logger.info("Stopping...");
 
-        if (callSystemExit) {
-            System.exit(0);
+        stopListeners();
+
+        // TODO: stop games
+
+        logger.info("Closing event loops");
+        networkEventLoops.shutdownGracefully();
+        gameEventLoops.shutdownGracefully();
+        try {
+            networkEventLoops.awaitTermination(Long.MAX_VALUE, TimeUnit.NANOSECONDS);
+            gameEventLoops.awaitTermination(Long.MAX_VALUE, TimeUnit.NANOSECONDS);
+        } catch (InterruptedException ignored) {
         }
+
+        logger.info("Stopped!");
+
+        stopCallback.run();
     }
 }

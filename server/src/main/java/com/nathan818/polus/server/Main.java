@@ -9,6 +9,8 @@ import joptsimple.OptionSet;
 import joptsimple.OptionSpec;
 
 public class Main {
+    private static boolean callSystemExit = true;
+
     @SuppressWarnings("ArraysAsListWithZeroOrOneArgument")
     public static void main(String[] args) throws Exception {
         PolusLogging.init();
@@ -37,11 +39,24 @@ public class Main {
             System.out.println(PolusServer.class.getPackage().getImplementationVersion());
             return;
         }
+        File configFile = options.valueOf(configFileOpt).getAbsoluteFile();
 
         PolusServer server = new PolusServer();
-        if (!server.start(options.valueOf(configFileOpt).getAbsoluteFile())) {
-            PolusLogging.shutdown();
-            System.exit(1);
+        if (!server.start(configFile, () -> shutdown(0))) {
+            shutdown(1);
+            return;
+        }
+
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+            callSystemExit = false;
+            server.stopNow();
+        }, "ShutdownHook Thread"));
+    }
+
+    private static void shutdown(int exitStatus) {
+        PolusLogging.shutdown();
+        if (callSystemExit) {
+            System.exit(exitStatus);
         }
     }
 }
