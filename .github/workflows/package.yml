@@ -5,30 +5,54 @@ on:
   - pull_request
 
 jobs:
+
   build:
-
     runs-on: ubuntu-latest
-
     steps:
       - uses: actions/checkout@v2
-
       - name: Setup JDK 8
         uses: actions/setup-java@v1
         with:
           java-version: 8
-
       - name: Cache maven packages
         uses: actions/cache@v2
         with:
           path: ~/.m2
           key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
           restore-keys: ${{ runner.os }}-m2
-
       - name: Build with maven
         run: mvn -B -Dmaven.javadoc.skip=true clean package -Dbuild.number=${{ github.run_number }} -Pshrink
-
       - name: Archive the server jar
         uses: actions/upload-artifact@v2
         with:
           name: Polus Server (jar)
           path: bootstrap/target/Polus.jar
+
+  release:
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/v')
+    needs: build
+    steps:
+      - name: Download Polus Server (jar)
+        uses: actions/download-artifact@v2
+        with:
+          name: Polus Server (jar)
+      - name: Create release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: Polus ${{ github.ref }}
+          prerelease: false
+          draft: true
+      - name: Upload Polus Server Asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./Polus.jar
+          asset_name: Polus.jar
+          asset_content_type: application/java-archive
