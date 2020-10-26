@@ -46,6 +46,9 @@
     <fastutil.version>8.4.2</fastutil.version>
     <netty.version>4.1.53.Final</netty.version>
     <jopt-simple.version>5.0.4</jopt-simple.version>
+    <snakeyaml.version>1.27</snakeyaml.version>
+    <validation-api.version>2.0.1.Final</validation-api.version>
+    <hibernate-validator.version>6.1.6.Final</hibernate-validator.version>
   </properties>
 
   <dependencies>

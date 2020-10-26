@@ -3,8 +3,6 @@ package com.nathan818.polus.logging;
 import java.util.Locale;
 import lombok.experimental.UtilityClass;
 import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.core.LoggerContext;
-import org.apache.logging.log4j.core.config.Configurator;
 
 @UtilityClass
 public class PolusLogging {
@@ -22,7 +20,7 @@ public class PolusLogging {
 
     public static void shutdown() {
         try {
-            Configurator.shutdown((LoggerContext) LogManager.getContext());
+            LogManager.shutdown();
         } catch (Exception ignored) {
         }
     }

@@ -2,9 +2,11 @@ package com.nathan818.polus.server;
 
 import com.nathan818.polus.logging.PolusLogging;
 import io.netty.util.ResourceLeakDetector;
+import java.io.File;
 import java.util.Arrays;
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
+import joptsimple.OptionSpec;
 
 public class Main {
     @SuppressWarnings("ArraysAsListWithZeroOrOneArgument")
@@ -19,21 +21,27 @@ public class Main {
 
         OptionParser parser = new OptionParser();
         parser.allowsUnrecognizedOptions();
-        parser.acceptsAll(Arrays.asList("help"), "Display this help and exit");
-        parser.acceptsAll(Arrays.asList("v", "version"), "Print version and exit");
+        OptionSpec<File> configFileOpt = parser
+                .acceptsAll(Arrays.asList("c", "config-file"), "Path to configuration file")
+                .withRequiredArg().ofType(File.class).defaultsTo(new File("config.yml"));
+        OptionSpec<Void> helpOpt = parser.acceptsAll(Arrays.asList("help"), "Display this help and exit");
+        OptionSpec<Void> versionOpt = parser.acceptsAll(Arrays.asList("v", "version"), "Print version and exit");
 
         OptionSet options = parser.parse(args);
 
-        if (options.has("help")) {
+        if (options.has(helpOpt)) {
             parser.printHelpOn(System.out);
             return;
         }
-        if (options.has("version")) {
+        if (options.has(versionOpt)) {
             System.out.println(PolusServer.class.getPackage().getImplementationVersion());
             return;
         }
 
         PolusServer server = new PolusServer();
-        server.start();
+        if (!server.start(options.valueOf(configFileOpt).getAbsoluteFile())) {
+            PolusLogging.shutdown();
+            System.exit(1);
+        }
     }
 }
