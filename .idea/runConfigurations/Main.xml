@@ -1,0 +1,11 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Main" type="Application" factoryName="Application" nameIsGenerated="true">
+    <option name="MAIN_CLASS_NAME" value="com.nathan818.polus.bootstrap.Main" />
+    <module name="polus-bootstrap" />
+    <option name="VM_PARAMETERS" value="-Dcom.nathan818.polus.logging.consoleAvailable=true -Dcom.nathan818.polus.protocol.logDecoderFailures=true -Dcom.nathan818.polus.protocol.withStacktrace=true -Dio.netty.leakDetectionLevel=advanced -Dcom.nathan818.polus.server.debugProtocolHazel=false -Dcom.nathan818.polus.server.debugProtocolPolus=false" />
+    <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/serverdir" />
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component>

@@ -3,7 +3,9 @@
 /logs
 
 ### Jetbrains IDE
-.idea/
+.idea/*
+!.idea/codeStyles/
+!.idea/runConfigurations/
 *.iml
 
 ### Maven
