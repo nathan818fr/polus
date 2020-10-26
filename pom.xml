@@ -49,7 +49,7 @@
     <netty.version>4.1.53.Final</netty.version>
     <jopt-simple.version>5.0.4</jopt-simple.version>
     <snakeyaml.version>1.27</snakeyaml.version>
-    <validation-api.version>2.0.1.Final</validation-api.version>
+    <validation-api.version>2.0.2</validation-api.version>
     <hibernate-validator.version>6.1.6.Final</hibernate-validator.version>
   </properties>
 

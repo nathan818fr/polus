@@ -5,7 +5,7 @@ This configuration is made to be used with AsyncLoggerContextSelector:
 - file logger is not flushed immediately
 - com.nathan818.polus.logging.PolusLogging.init()/shutdown() must be called by the implementation
 -->
-<Configuration status="warn" shutdownHook="disable" packages="com.nathan818.polus.logging.log4j2">
+<Configuration status="warn" shutdownHook="disable">
   <Properties>
     <Property name="LOG_EXCEPTION_CONVERSION_WORD">%xwEx</Property>
     <Property name="LOG_DATEFORMAT_PATTERN">yyyy-MM-dd HH:mm:ss.SSS</Property>
