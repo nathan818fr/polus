@@ -40,13 +40,11 @@ import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
 import javax.validation.Validator;
 import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 import org.hibernate.validator.messageinterpolation.ParameterMessageInterpolator;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
+@Slf4j
 public class PolusServer implements Server {
-    private static final Logger logger = LoggerFactory.getLogger(PolusServer.class);
-
     private Config config;
     private Runnable stopCallback;
     private volatile @Getter boolean isRunning;
@@ -70,7 +68,7 @@ public class PolusServer implements Server {
         int networkThreads = config.getNetworkThreads(PipelineUtil.isEpoll() ? Runtime.getRuntime().availableProcessors() : 1);
         if (!PipelineUtil.isEpoll() && networkThreads > 1) {
             networkThreads = 1;
-            logger.warn("Epoll is not available so networkThreads is capped to 1");
+            log.warn("Epoll is not available so networkThreads is capped to 1");
         }
         networkEventLoops = PipelineUtil.newEventLoopGroup(networkThreads, new ThreadFactoryBuilder().setNameFormat("Netty IO Thread #%1$d").build());
 
@@ -90,7 +88,7 @@ public class PolusServer implements Server {
     }
 
     public Config loadConfig(File configFile) {
-        logger.debug("Using configuration file: '" + configFile + "'");
+        log.debug("Using configuration file: '" + configFile + "'");
 
         // read file
         Config config;
@@ -98,7 +96,7 @@ public class PolusServer implements Server {
             InputStream is = new FileInputStream(configFile);
             config = YamlConfigProvider.readConfig(is);
         } catch (FileNotFoundException ignored) {
-            logger.info("The configuration file does not exist, it will be created");
+            log.info("The configuration file does not exist, it will be created");
             config = null;
         } catch (Exception ex) {
             throw new RuntimeException("Error reading the configuration file", ex);
@@ -118,7 +116,7 @@ public class PolusServer implements Server {
             configFile.getParentFile().mkdirs();
             YamlConfigProvider.writeConfig(new FileOutputStream(configFile), config);
         } catch (Exception ex) {
-            logger.warn("Error saving the configuration file", ex);
+            log.warn("Error saving the configuration file", ex);
         }
 
         // validate
@@ -128,7 +126,7 @@ public class PolusServer implements Server {
                 .getValidator();
         Set<ConstraintViolation<Config>> violations = validator.validate(config);
         if (!violations.isEmpty()) {
-            logger.error("The configuration file contains invalid values:\n"
+            log.error("The configuration file contains invalid values:\n"
                     + violations.stream()
                     .map(v -> "- " + v.getPropertyPath() + " " + v.getMessage() + " (current value: " + v.getInvalidValue() + ")")
                     .distinct()
@@ -157,10 +155,10 @@ public class PolusServer implements Server {
             bindFuture.addListener((GenericFutureListener<ChannelFuture>) f -> {
                 if (f.isSuccess()) {
                     listeners.add(f.channel());
-                    logger.info("Listening on " + socketAddr);
+                    log.info("Listening on " + socketAddr);
                     promise.setSuccess();
                 } else {
-                    logger.warn("Could not bind to host " + socketAddr, f.cause());
+                    log.warn("Could not bind to host " + socketAddr, f.cause());
                     promise.setFailure(f.cause());
                 }
             });
@@ -171,7 +169,7 @@ public class PolusServer implements Server {
             bind.awaitUninterruptibly();
         }
         if (listeners.isEmpty()) {
-            logger.error("No listeners could be started");
+            log.error("No listeners could be started");
             return false;
         }
 
@@ -180,11 +178,11 @@ public class PolusServer implements Server {
 
     public void stopListeners() {
         for (Channel listener : listeners) {
-            logger.info("Closing listener " + listener);
+            log.info("Closing listener " + listener);
             try {
                 listener.close().syncUninterruptibly();
             } catch (ChannelException ex) {
-                logger.error("Could not close listen thread", ex);
+                log.error("Could not close listen thread", ex);
             }
         }
         listeners.clear();
@@ -206,13 +204,13 @@ public class PolusServer implements Server {
             shutdownLock.unlock();
         }
 
-        logger.info("Stopping...");
+        log.info("Stopping...");
 
         stopListeners();
 
         // TODO: stop games
 
-        logger.info("Closing event loops");
+        log.info("Closing event loops");
         networkEventLoops.shutdownGracefully();
         gameEventLoops.shutdownGracefully();
         try {
@@ -221,7 +219,7 @@ public class PolusServer implements Server {
         } catch (InterruptedException ignored) {
         }
 
-        logger.info("Stopped!");
+        log.info("Stopped!");
 
         stopCallback.run();
     }

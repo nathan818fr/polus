@@ -29,13 +29,9 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public abstract class StatefulUdpServerChannel<I, C extends StatefulUdpServerChildChannel<I>>
         extends AbstractServerChannel {
-    private static final Logger logger = LoggerFactory.getLogger(StatefulUdpServerChannel.class);
-
     private final ChannelFactory<? extends DatagramChannel> channelFactory;
     private final int threadsCount;
     private final StatefulUdpChannelConfig config = new StatefulUdpChannelConfig(this);

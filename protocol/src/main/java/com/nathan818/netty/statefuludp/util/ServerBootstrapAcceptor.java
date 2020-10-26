@@ -12,12 +12,10 @@ import io.netty.util.AttributeKey;
 import java.lang.reflect.Field;
 import java.util.Map;
 import lombok.SneakyThrows;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 public class ServerBootstrapAcceptor extends ChannelInboundHandlerAdapter {
-    private static final Logger logger = LoggerFactory.getLogger(ServerBootstrapAcceptor.class);
-
     private static final String ACCEPTOR_ID = "ServerBootstrap$ServerBootstrapAcceptor#0";
 
     public static void copy(ServerChannel srcChannel, Channel dstChannel) {
@@ -82,7 +80,7 @@ public class ServerBootstrapAcceptor extends ChannelInboundHandlerAdapter {
 
     private static void forceClose(Channel child, Throwable t) {
         child.unsafe().closeForcibly();
-        logger.warn("Failed to register an accepted channel: {}", child, t);
+        log.warn("Failed to register an accepted channel: {}", child, t);
     }
 
     @SuppressWarnings("ForLoopReplaceableByForEach")
@@ -97,10 +95,10 @@ public class ServerBootstrapAcceptor extends ChannelInboundHandlerAdapter {
     private static void setChannelOption(Channel channel, ChannelOption<?> option, Object value) {
         try {
             if (!channel.config().setOption((ChannelOption) option, value)) {
-                logger.warn("Unknown channel option '{}' for channel '{}'", option, channel);
+                log.warn("Unknown channel option '{}' for channel '{}'", option, channel);
             }
         } catch (Throwable t) {
-            logger.warn("Failed to set channel option '{}' with value '{}' for channel '{}'",
+            log.warn("Failed to set channel option '{}' with value '{}' for channel '{}'",
                     option, value, channel, t);
         }
     }

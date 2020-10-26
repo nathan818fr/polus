@@ -18,13 +18,9 @@ import com.nathan818.polus.server.limbo.PolusLimbo;
 import java.util.Objects;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 @RequiredArgsConstructor
 public class GameHandler extends PacketHandler implements PolusPlayerConnection {
-    private static final Logger logger = LoggerFactory.getLogger(GameHandler.class);
-
     private final PolusGame game;
     private int badGameCount;
     private volatile @Getter PolusPlayer player; // set on game executor

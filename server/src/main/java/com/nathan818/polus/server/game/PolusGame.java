@@ -8,14 +8,12 @@ import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
 @RequiredArgsConstructor
 @Getter
+@Slf4j
 public class PolusGame implements Game {
-    private static final Logger logger = LoggerFactory.getLogger(PolusGame.class);
-
     private final PolusGameManager manager;
     private final Executor executor;
     private final int codeId;

@@ -14,12 +14,8 @@ import io.netty.channel.socket.DatagramPacket;
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
 import java.util.concurrent.atomic.AtomicBoolean;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public abstract class StatefulUdpServerChildChannel<I> extends AbstractChannel {
-    private static final Logger logger = LoggerFactory.getLogger(StatefulUdpServerChildChannel.class);
-
     private final I udpId;
     private final ChannelMetadata metadata = new ChannelMetadata(false);
     private final DefaultChannelConfig config = new DefaultChannelConfig(this);

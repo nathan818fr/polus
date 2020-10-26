@@ -16,23 +16,21 @@ import io.netty.channel.ChannelOutboundHandlerAdapter;
 import io.netty.channel.ChannelPipeline;
 import io.netty.channel.ChannelPromise;
 import lombok.experimental.UtilityClass;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
 import static com.nathan818.polus.server.netty.PipelineUtil.PACKET_DECODER;
 import static com.nathan818.polus.server.netty.PipelineUtil.PACKET_ENCODER;
 
 @UtilityClass
+@Slf4j
 public class PipelineDebug {
-    private static final Logger logger = LoggerFactory.getLogger(PipelineDebug.class);
-
     public static void withHazelDebug(ChannelPipeline pipeline, String prefix) {
         pipeline.addBefore(PACKET_DECODER, "hazel-debug-in", new ChannelInboundHandlerAdapter() {
             @Override
             public void channelRead(ChannelHandlerContext ctx, Object msg) {
                 if (msg instanceof HazelPacket) {
                     HazelPacket packet = (HazelPacket) msg;
-                    logger.info(prefix + "< Hazel:" + packet.type().name()
+                    log.info(prefix + "< Hazel:" + packet.type().name()
                             + (packet.type().isReliable() != HazelPacketType.ReliableType.NONE ? " (" + packet.reliableId() + ")" : "")
                             + (packet.hasData() ? "\n" + ByteBufUtil.prettyHexDump(packet.data()) : ""));
                 }
@@ -44,7 +42,7 @@ public class PipelineDebug {
             public void write(ChannelHandlerContext ctx, Object msg, ChannelPromise promise) {
                 if (msg instanceof HazelPacket) {
                     HazelPacket packet = (HazelPacket) msg;
-                    logger.info(prefix + "> Hazel:" + packet.type().name()
+                    log.info(prefix + "> Hazel:" + packet.type().name()
                             + (packet.type().isReliable() != HazelPacketType.ReliableType.NONE ? " (" + packet.reliableId() + ")" : "")
                             + (packet.hasData() ? "\n" + ByteBufUtil.prettyHexDump(packet.data()) : ""));
                 }
@@ -65,7 +63,7 @@ public class PipelineDebug {
                         data = getData(((GameActionToTargetPacket) msg).action());
                     }
                     boolean reliable = ((PolusPacket) msg).reliable();
-                    logger.debug(prefix + "< "
+                    log.debug(prefix + "< "
                             + (!reliable ? "(unreliable) " : "")
                             + msg + (data != null ? "\n" + ByteBufUtil.prettyHexDump(data) : ""));
                 }
@@ -83,7 +81,7 @@ public class PipelineDebug {
             @Override
             public void write(ChannelHandlerContext ctx, Object msg, ChannelPromise promise) {
                 if (msg instanceof PolusPacket) {
-                    logger.debug(prefix + "> " + msg);
+                    log.debug(prefix + "> " + msg);
                 }
                 ctx.write(msg, promise);
             }

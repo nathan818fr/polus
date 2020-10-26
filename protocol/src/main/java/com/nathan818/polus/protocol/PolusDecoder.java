@@ -15,14 +15,13 @@ import java.util.List;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
 @RequiredArgsConstructor
 @Data
 @EqualsAndHashCode(callSuper = false)
+@Slf4j
 public class PolusDecoder extends MessageToMessageDecoder<HazelPacket> {
-    private static final Logger logger = LoggerFactory.getLogger(PolusDecoder.class);
     private static final boolean LOG_DECODER_FAILURES = Boolean.parseBoolean(System.getProperty("com.nathan818.polus.protocol.logDecoderFailures", "false"));
 
     private final Recipient recipient;
@@ -85,7 +84,7 @@ public class PolusDecoder extends MessageToMessageDecoder<HazelPacket> {
         } catch (Throwable t) {
             if (LOG_DECODER_FAILURES && data != null) {
                 data.readerIndex(logOffset);
-                logger.error(recipient + " - Packet decoding failed: " + t.getMessage()
+                log.error(recipient + " - Packet decoding failed: " + t.getMessage()
                         + "\nType: " + in.type().name()
                         + ", Data: [" + data.readableBytes() + " bytes, at offset " + logOffset + "]"
                         + "\n" + ByteBufUtil.prettyHexDump(data));

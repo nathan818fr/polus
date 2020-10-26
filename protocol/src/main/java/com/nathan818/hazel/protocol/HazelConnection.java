@@ -13,12 +13,9 @@ import it.unimi.dsi.fastutil.shorts.ShortSet;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 @RequiredArgsConstructor
 public class HazelConnection {
-    private static final Logger logger = LoggerFactory.getLogger(HazelConnection.class);
     private static final int RELIABLE_TICKS_INTERVAL = 100;
     private static final int PING_MILLIS = 1500;
     private static final int TIMEOUT_MILLIS = PING_MILLIS * 6;

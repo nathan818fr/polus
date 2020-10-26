@@ -6,13 +6,11 @@ import com.nathan818.polus.server.connection.handler.PacketHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
 @RequiredArgsConstructor
+@Slf4j
 public class HandlerBoss extends ChannelInboundHandlerAdapter {
-    private static final Logger logger = LoggerFactory.getLogger(HandlerBoss.class);
-
     private final HandlerChannel channel;
     private PacketHandler handler;
     private boolean handlerActive = false;
@@ -41,7 +39,7 @@ public class HandlerBoss extends ChannelInboundHandlerAdapter {
     public void channelActive(ChannelHandlerContext ctx) {
         handlerActive = true;
         handler.enabled(true);
-        logger.info(handler + " has connected from " + channel.getAddress());
+        log.info(handler + " has connected from " + channel.getAddress());
     }
 
     @Override
@@ -49,7 +47,7 @@ public class HandlerBoss extends ChannelInboundHandlerAdapter {
         channel.markDisconnected();
         handler.disabled(true);
         String reason = channel.getDisconnectReason();
-        logger.info(handler + " has disconnected" + (reason != null ? ": " + reason : ""));
+        log.info(handler + " has disconnected" + (reason != null ? ": " + reason : ""));
     }
 
     @Override
@@ -77,11 +75,11 @@ public class HandlerBoss extends ChannelInboundHandlerAdapter {
                 return;
             }
         } catch (Exception ex) {
-            logger.error(handler + " - exception processing exception", ex);
+            log.error(handler + " - exception processing exception", ex);
         }
 
         // TODO: Conditionally log exceptions
-        logger.error(handler + " - encountered exception", cause);
+        log.error(handler + " - encountered exception", cause);
 
         ctx.close();
     }

@@ -23,14 +23,12 @@ import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
 import static com.nathan818.polus.protocol.util.ProtocolPreconditions.checkState;
 
+@Slf4j
 public class InitialHandler extends PacketHandler {
-    private static final Logger logger = LoggerFactory.getLogger(InitialHandler.class);
-
     private static final String PLAYERNAME_CHARS = "a-zA-Z0-9"; // TODO: check all allowed chars (accents, etc)
     private static final Pattern PLAYERNAME_PATTERN = Pattern.compile(
             "^(?!.{11,})[" + PLAYERNAME_CHARS + "]+(?: [" + PLAYERNAME_CHARS + "]+)* ?$");
@@ -79,7 +77,7 @@ public class InitialHandler extends PacketHandler {
         loginState = LoginState.LOGGED;
         cancelTimeoutTask();
 
-        logger.info(this + " - Logged with version "
+        log.info(this + " - Logged with version "
                 + GameVersionUtil.gameVersionToString(protocolVersion) + " (" + protocolVersion + ")");
     }
 

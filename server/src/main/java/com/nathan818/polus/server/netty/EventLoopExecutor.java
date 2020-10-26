@@ -4,14 +4,12 @@ import com.nathan818.polus.api.util.concurrent.AbstractExecutor;
 import io.netty.channel.EventLoop;
 import lombok.Getter;
 import lombok.ToString;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
 @Getter
 @ToString
+@Slf4j
 public class EventLoopExecutor extends AbstractExecutor {
-    private static final Logger logger = LoggerFactory.getLogger(EventLoopExecutor.class);
-
     private final EventLoop eventLoop;
 
     public EventLoopExecutor(EventLoop eventLoop) {
@@ -35,7 +33,7 @@ public class EventLoopExecutor extends AbstractExecutor {
             try {
                 runnable.run();
             } catch (Throwable t) {
-                logger.error("Unexpected exception from a GameExecutor:", t);
+                log.error("Unexpected exception from a GameExecutor:", t);
             }
         };
     }

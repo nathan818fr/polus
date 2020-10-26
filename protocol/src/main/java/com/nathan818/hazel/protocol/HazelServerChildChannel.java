@@ -6,12 +6,8 @@ import java.net.InetSocketAddress;
 import lombok.Getter;
 import lombok.ToString;
 import lombok.experimental.Accessors;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class HazelServerChildChannel extends StatefulUdpServerChildChannel<HazelServerChildChannel.Id> {
-    private static final Logger logger = LoggerFactory.getLogger(HazelServerChildChannel.class);
-
     private final @Getter HazelConnection connection = new HazelConnection(this);
 
     public HazelServerChildChannel(StatefulUdpServerChannel parent, Id udpId) {

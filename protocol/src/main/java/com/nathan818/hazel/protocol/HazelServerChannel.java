@@ -8,12 +8,8 @@ import io.netty.channel.socket.DatagramChannel;
 import io.netty.channel.socket.DatagramPacket;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class HazelServerChannel extends StatefulUdpServerChannel<HazelServerChildChannel.Id, HazelServerChildChannel> {
-    private static final Logger logger = LoggerFactory.getLogger(HazelServerChannel.class);
-
     public HazelServerChannel(ChannelFactory<? extends DatagramChannel> channelFactory, int threadsCount) {
         super(channelFactory, threadsCount);
     }

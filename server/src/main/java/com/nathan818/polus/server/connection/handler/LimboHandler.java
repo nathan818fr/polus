@@ -6,14 +6,12 @@ import com.nathan818.polus.server.limbo.PolusLimbo;
 import com.nathan818.polus.server.limbo.PolusLimboConnection;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
 @RequiredArgsConstructor
 @Getter
+@Slf4j
 public class LimboHandler extends PacketHandler implements PolusLimboConnection {
-    private static final Logger logger = LoggerFactory.getLogger(LimboHandler.class);
-
     private final PolusLimbo limbo;
     private final int playerId;
 
