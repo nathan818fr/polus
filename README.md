@@ -1,4 +1,4 @@
-# Polus
+# Polus · [![Package](https://github.com/nathan818fr/polus/workflows/Package/badge.svg?branch=classic)](https://github.com/nathan818fr/polus/actions)
 
 Polus is an open source Among Us server implementation!
 
