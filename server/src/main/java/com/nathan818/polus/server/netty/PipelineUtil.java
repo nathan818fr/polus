@@ -16,7 +16,9 @@ import io.netty.channel.socket.nio.NioDatagramChannel;
 import io.netty.util.internal.PlatformDependent;
 import java.util.concurrent.ThreadFactory;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 public class PipelineUtil {
     private static final boolean DEBUG_PROTOCOL_HAZEL = Boolean.parseBoolean(System.getProperty("com.nathan818.polus.server.debugProtocolHazel", "false"));
     private static final boolean DEBUG_PROTOCOL_POLUS = Boolean.parseBoolean(System.getProperty("com.nathan818.polus.server.debugProtocolPolus", "false"));
@@ -27,8 +29,15 @@ public class PipelineUtil {
     private static boolean EPOLL;
 
     static {
-        if (!PlatformDependent.isWindows() && Boolean.parseBoolean(System.getProperty("com.nathan818.polus.server.epoll", "true"))) {
-            EPOLL = Epoll.isAvailable();
+        if (Boolean.parseBoolean(System.getProperty("com.nathan818.polus.server.epoll", "true"))) {
+            if (PlatformDependent.isWindows()) {
+                log.info("Epoll is not available on Windows, network performance may be impacted");
+            } else {
+                EPOLL = Epoll.isAvailable();
+                if (!EPOLL) {
+                    log.warn("Epoll is not working, network performance may be impacted", Epoll.unavailabilityCause());
+                }
+            }
         }
     }
 

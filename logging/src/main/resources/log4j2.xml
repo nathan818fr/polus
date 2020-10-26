@@ -29,6 +29,7 @@ This configuration is made to be used with AsyncLoggerContextSelector:
   </Appenders>
   <Loggers>
     <Logger name="com.nathan818.polus" level="debug"/>
+    <Logger name="org.hibernate.validator" level="warn"/>
     <Root level="info">
       <AppenderRef ref="Console"/>
       <AppenderRef ref="File"/>
