@@ -63,8 +63,15 @@ public class PolusServer implements Server {
             return false;
         }
 
-        gameEventLoops = new DefaultEventLoopGroup(1, new ThreadFactoryBuilder().setNameFormat("Game Thread #%1$d").build());
-        networkEventLoops = PipelineUtil.newEventLoopGroup(0, new ThreadFactoryBuilder().setNameFormat("Netty IO Thread #%1$d").build());
+        int gameThreads = config.getGameThreads(Runtime.getRuntime().availableProcessors());
+        gameEventLoops = new DefaultEventLoopGroup(gameThreads, new ThreadFactoryBuilder().setNameFormat("Game Thread #%1$d").build());
+
+        int networkThreads = config.getNetworkThreads(PipelineUtil.isEpoll() ? Runtime.getRuntime().availableProcessors() : 1);
+        if (!PipelineUtil.isEpoll() && networkThreads > 1) {
+            networkThreads = 1;
+            logger.warn("Epoll is not available so networkThreads is capped to 1");
+        }
+        networkEventLoops = PipelineUtil.newEventLoopGroup(networkThreads, new ThreadFactoryBuilder().setNameFormat("Netty IO Thread #%1$d").build());
 
         gameManager = new PolusGameManager(this, gameEventLoops);
 
