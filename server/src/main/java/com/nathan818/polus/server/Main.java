@@ -7,14 +7,20 @@ import java.util.Arrays;
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
 import joptsimple.OptionSpec;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class Main {
+    private static final Logger log;
     private static boolean callSystemExit = true;
+
+    static {
+        PolusLogging.init();
+        log = LoggerFactory.getLogger(Main.class);
+    }
 
     @SuppressWarnings("ArraysAsListWithZeroOrOneArgument")
     public static void main(String[] args) throws Exception {
-        PolusLogging.init();
-
         System.setProperty("io.netty.selectorAutoRebuildThreshold", "0"); // https://github.com/netty/netty/issues/2174
         if (System.getProperty("io.netty.leakDetectionLevel") == null) {
             // Disable leak detector by default (instead of using SIMPLE)
@@ -41,6 +47,7 @@ public class Main {
         }
         File configFile = options.valueOf(configFileOpt).getAbsoluteFile();
 
+        log.info("Starting Polus version " + PolusServer.class.getPackage().getImplementationVersion());
         PolusServer server = new PolusServer();
         if (!server.start(configFile, () -> shutdown(0))) {
             shutdown(1);

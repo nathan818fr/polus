@@ -37,6 +37,9 @@
     <maven.compiler.target>${java.version}</maven.compiler.target>
     <maven.compiler.source>${java.version}</maven.compiler.source>
 
+    <!-- CI -->
+    <build.number>X</build.number>
+
     <!-- Dependencies versions -->
     <lombok.version>1.18.12</lombok.version>
     <slf4j-api.version>1.7.30</slf4j-api.version>

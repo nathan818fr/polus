@@ -91,6 +91,23 @@
   <build>
     <plugins>
       <plugin>
+        <groupId>net.md-5</groupId>
+        <artifactId>scriptus</artifactId>
+        <version>0.4.1</version>
+        <executions>
+          <execution>
+            <phase>initialize</phase>
+            <goals>
+              <goal>describe</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <format>${project.version}-%s-${build.number}</format>
+          <scmDirectory>../</scmDirectory>
+        </configuration>
+      </plugin>
+      <plugin>
         <artifactId>maven-jar-plugin</artifactId>
         <configuration>
           <archive>
@@ -98,6 +115,9 @@
               <mainClass>com.nathan818.polus.server.Main</mainClass>
               <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
             </manifest>
+            <manifestEntries>
+              <Implementation-Version>${describe}</Implementation-Version>
+            </manifestEntries>
           </archive>
         </configuration>
       </plugin>
